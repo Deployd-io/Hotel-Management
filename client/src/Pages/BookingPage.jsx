@@ -8,8 +8,10 @@ import { showSnakbar } from '../store/slices/snakbar';
 
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+const logger = console;
 
 const BookingPage = () => {
+logger.debug('>>> Entering BookingPage()');
   const dispatch = useDispatch();
   const [bookings, setBookings] = useState([])
   const [reviewBoxes, setReviewBoxes] = useState({})
@@ -31,6 +33,7 @@ const BookingPage = () => {
       })
       .catch(err => console.error(err))
   }
+	logger.debug('<<< Exiting getBookings()');
   useEffect(() => {
     getBookings()
   }, [])
@@ -41,6 +44,7 @@ const BookingPage = () => {
     }))
   }
   const submitReview = (index, id) => {
+	logger.debug(`>>> Entering submitReview(index=${index},id=${id})`);
     const reviewData = {
       text: reviewTexts[index]
     }
@@ -60,14 +64,18 @@ const BookingPage = () => {
         console.error('Error submitting review:', error)
       })
   }
+	logger.debug(`<<< Exiting submitReview(index=${index},id=${id})`);
 
   const handleReviewTextChange = (index, newText) => {
+	logger.debug(`>>> Entering handleReviewTextChange(index=${index},newText=${newText})`);
     setReviewTexts(prevState => ({
       ...prevState,
       [index]: newText
+	logger.debug(`<<< Exiting handleReviewTextChange(index=${index},newText=${newText})`);
     }))
   }
   const cancelBooking = (id) => {
+	logger.debug(`>>> Entering cancelBooking(id=${id})`);
     console.log(id)
     const confirmCancel = window.confirm("Are you sure you want to cancel?");
     if (confirmCancel) {
@@ -107,20 +115,30 @@ const BookingPage = () => {
           console.error('Error cancelling booking:', error)
         })
 
+	logger.debug(`<<< Exiting cancelBooking(id=${id})`);
     }
   };
 
   const downloadPdf = async (id) => {
+	logger.debug(`>>> Entering downloadPdf(id=${id})`); const _start = Date.now();
     try {
       const response = await axios.get(`/bookings/${id}`);
+	logger.debug(`downloadPdf(id=${id}): response → ${response}`);
 
       const capture = document.getElementById('capture');
+	logger.info(`downloadPdf(id=${id}): API call took ${Date.now() - _start} ms`);
+	logger.debug(`downloadPdf(id=${id}): capture → ${capture}`);
       const canvas = await html2canvas(capture);
       const imgData = canvas.toDataURL('image/png');
+	logger.debug(`downloadPdf(id=${id}): canvas → ${canvas}`);
+	logger.debug(`downloadPdf(id=${id}): imgData → ${imgData}`);
 
       const pdf = new jsPDF('p', 'px', 'a4');
+	logger.debug(`downloadPdf(id=${id}): pdf → ${pdf}`);
       const width = pdf.internal.pageSize.getWidth();
+	logger.debug(`downloadPdf(id=${id}): width → ${width}`);
       const height = pdf.internal.pageSize.getHeight();
+	logger.debug(`downloadPdf(id=${id}): height → ${height}`);
 
       pdf.addImage(imgData, 'JPEG', 0, 0, width, height);
       pdf.save('Booking.pdf');
@@ -132,6 +150,7 @@ const BookingPage = () => {
         })
       );
     } catch (error) {
+	logger.debug(`<<< Exiting downloadPdf(id=${id})`);
       console.error('Error downloading PDF:', error);
       dispatch(
         showSnakbar({
@@ -143,6 +162,7 @@ const BookingPage = () => {
     }
   };
 
+logger.debug('<<< Exiting BookingPage()');
   return (
     <div className='container'>
       <div className='row row-cols-12 row-cols-sm-2 g-4'>
