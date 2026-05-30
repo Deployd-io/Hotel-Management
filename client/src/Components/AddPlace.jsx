@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import Perks from '../Components/Perks'
 import axios from 'axios'
+const logger = console;
 import { UserContext } from '../UserContext'
 import { Navigate, useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { showSnakbar } from '../store/slices/snakbar'
 
 const AddPlace = () => {
+logger.debug('>>> Entering AddPlace()');
   const dispatch = useDispatch()
 
   const { id } = useParams()
@@ -29,10 +31,12 @@ const AddPlace = () => {
   const [mealPrice, setMealPrice] = useState([])
   const [meals, setMeals] = useState([])
   // const [mealPrice,setMealPrice] = useState([]);
+logger.debug(`AddPlace: title → ${title}`);
 
 
   const [redirect, setRedirect] = useState(false)
 
+logger.debug(`AddPlace: redirect → ${redirect}`);
   useEffect(() => {
     if (id) {
       axios.post('/places/id', { id }).then(response => {
@@ -155,10 +159,12 @@ const AddPlace = () => {
     }
   }
 
+logger.error('Exception in AddPlace():', error.message, error);
   if (redirect) {
     return <Navigate to='/account' />
   }
 
+logger.debug('<<< Exiting AddPlace()');
   return (
     <div className='mx-auto w-full sm:w-10/12 lg:w-8/12 mt-8 p-3'>
       <form onSubmit={savePlace} className='space-y-2'>
