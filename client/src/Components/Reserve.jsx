@@ -3,11 +3,13 @@ import { differenceInDays } from 'date-fns'
 import axios from 'axios'
 import { UserContext } from '../UserContext'
 import useRazorpay from 'react-razorpay'
+const logger = console;
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { showSnakbar } from '../store/slices/snakbar'
 
 const Reserve = ({ place }) => {
+logger.debug(`>>> Entering Reserve(place=${place})`);
   const dispatch = useDispatch()
 
   const navigate = useNavigate()
@@ -20,10 +22,13 @@ const Reserve = ({ place }) => {
   const [phone, setPhone] = useState('')
   const [redirect, setRedirect] = useState(false)
 
+logger.debug(`Reserve: fullName → ****`);
+logger.debug(`Reserve: phone → ****`);
   const [loading, setLoading] = useState(true)
   const [selectedMeals, setSelectedMeals] = useState({})
   const [totalPrice, setTotalPrice] = useState(0)
   let status = false
+logger.debug(`Reserve(place=${place}): status → ${status}`);
   const [mealType, setMealType] = useState('veg')
   const [phoneError, setPhoneError] = useState('')
 
@@ -41,6 +46,7 @@ const Reserve = ({ place }) => {
   }
 
   const makeBooking = async (razorpay_payment_id, status) => {
+	logger.debug(`>>> Entering makeBooking(razorpay_payment_id=${razorpay_payment_id},status=${status})`); const _start = Date.now();
     const response = await axios.post('/bookings', {
       place: place._id,
       checkIn,
@@ -55,6 +61,7 @@ const Reserve = ({ place }) => {
       status
     })
     if (response.status === 201) {
+	logger.debug(`makeBooking(razorpay_payment_id=${razorpay_payment_id},status=${status}): response → ${response}`);
       dispatch(
         showSnakbar({
           message: `Place booked successfully!!`,
@@ -64,6 +71,7 @@ const Reserve = ({ place }) => {
       )
       setRedirect(true)
     } else {
+	logger.info(`makeBooking(razorpay_payment_id=${razorpay_payment_id}, status=${status}): API call took ${Date.now() - _start} ms`);
       dispatch(
         showSnakbar({
           message: `Please login first`,
@@ -75,6 +83,7 @@ const Reserve = ({ place }) => {
   }
 
   const handlePayment = async () => {
+	logger.debug('>>> Entering handlePayment()');
     if (user === null) {
       dispatch(
         showSnakbar({
@@ -93,10 +102,12 @@ const Reserve = ({ place }) => {
         name: 'Acme Corp',
         description: 'Test Transaction',
         handler: function (response) {
+		logger.debug(`>>> Entering handler(response=${response})`);
           status = true
           makeBooking(response.razorpay_payment_id, status)
         },
         notes: {
+		logger.debug(`<<< Exiting handler(response=${response})`);
           address: 'Razorpay Corporate Office'
         },
         theme: {
@@ -106,7 +117,9 @@ const Reserve = ({ place }) => {
 
       const rzp1 = new Razorpay(options)
 
+	logger.debug(`handlePayment(): rzp1 → ${rzp1}`);
       rzp1.on('payment.failed', function (response) {
+		logger.debug('>>> Entering on()');
         status = false
         makeBooking(response.razorpay_payment_id, status)
         dispatch(
@@ -118,11 +131,14 @@ const Reserve = ({ place }) => {
         )
       })
 
+	logger.debug('<<< Exiting on()');
       rzp1.open()
     }
+	logger.debug('<<< Exiting handlePayment()');
   }
 
   const handleMealSelect = (mealType, price) => {
+	logger.debug(`>>> Entering handleMealSelect(mealType=${mealType},price=${price})`);
     // Check if the meal is already selected
     if (selectedMeals.hasOwnProperty(mealType)) {
       // Meal is already selected, so unselect it
@@ -135,17 +151,21 @@ const Reserve = ({ place }) => {
       setSelectedMeals(updatedSelectedMeals)
       setTotalPrice(totalPrice + price)
     }
+	logger.debug(`<<< Exiting handleMealSelect(mealType=${mealType},price=${price})`);
   }
 
   const calculateTotalPrice = () => {
+	logger.debug('>>> Entering calculateTotalPrice()');
     let mealsTotal = 0
     for (const mealType in selectedMeals) {
       mealsTotal += Number(selectedMeals[mealType]) * numberOfNights
     }
     setTotalPrice(place.price * numberOfNights + mealsTotal)
   }
+	logger.debug('<<< Exiting calculateTotalPrice()');
 
   const today = new Date().toISOString().split('T')[0]
+logger.debug(`Reserve(place=${place}): today → ${today}`);
 
   const validatePhoneNumber = () => {
     const phonePattern = /^\d{10}$/;
@@ -169,7 +189,9 @@ const Reserve = ({ place }) => {
     }
   };
 
+logger.debug(`<<< Exiting Reserve(place=${place})`);
   const handleReservation = () => {
+	logger.debug('>>> Entering handleReservation()');
     const isPhoneValid = validatePhoneNumber();
     // if (isPhoneValid) {
     //   handlePayment();
@@ -185,6 +207,7 @@ const Reserve = ({ place }) => {
       )
       navigate('/login')
     }
+	logger.debug('<<< Exiting handleReservation()');
 
     else if (!checkIn || !checkOut) {
       dispatch(

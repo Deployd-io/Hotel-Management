@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import Perks from '../Components/Perks'
 import axios from 'axios'
+const logger = console;
 import { UserContext } from '../UserContext'
 import { Navigate, useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { showSnakbar } from '../store/slices/snakbar'
 
 const AddPlace = () => {
+logger.debug('>>> Entering AddPlace()');
   const dispatch = useDispatch()
 
   const { id } = useParams()
@@ -155,10 +157,12 @@ const AddPlace = () => {
     }
   }
 
+logger.error('Exception in AddPlace():', error.message, error);
   if (redirect) {
     return <Navigate to='/account' />
   }
 
+logger.debug('<<< Exiting AddPlace()');
   return (
     <div className='mx-auto w-full sm:w-10/12 lg:w-8/12 mt-8 p-3'>
       <form onSubmit={savePlace} className='space-y-2'>
