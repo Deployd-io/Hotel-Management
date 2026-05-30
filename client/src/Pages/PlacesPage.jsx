@@ -3,12 +3,15 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 
 import AddPlace from '../Components/AddPlace';
 import axios from 'axios';
+const logger = console;
 
 const PlacesPage = () => {
+logger.debug('>>> Entering PlacesPage()');
   const { action, id } = useParams();
   const [places, setPlaces] = useState([])
   const [UpdatePlace, setupdatePlace] = useState([])
   const [refresh, setRefresh] = useState(false);
+logger.debug(`PlacesPage: places → ${places}`);
 
   useEffect(() => {
     axios.get('/places').then((response) => {
@@ -17,6 +20,7 @@ const PlacesPage = () => {
   }, [])
 
 
+logger.debug('<<< Exiting PlacesPage()');
   return (
     <>
       {action !== 'new' && (

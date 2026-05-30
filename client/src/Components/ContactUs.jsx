@@ -1,18 +1,25 @@
 import React from 'react'
 import { useState } from 'react'
 import axios from 'axios'
+const logger = console;
 import { useDispatch } from 'react-redux';
 import { showSnakbar } from '../store/slices/snakbar';
 
 const ContactUs = () => {
+logger.debug('>>> Entering ContactUs()');
 
   const dispatch = useDispatch();
   const [name, setName] = useState('');
+logger.debug(`ContactUs: name → ${name}`);
+logger.debug(`ContactUs: email → ****`);
   const [email, setEmail] = useState('');
   const [number, setNumber] = useState('');
+logger.debug(`ContactUs: number → ${number}`);
   const [message, setMessage] = useState('');
+logger.debug(`ContactUs: message → ${message}`);
 
   const handleSubmit = async (e) => {
+	logger.debug(`>>> Entering handleSubmit(e=${e})`); const _start = Date.now();
     e.preventDefault();
     try {
       const response = await axios.post('/contact', {
@@ -47,17 +54,22 @@ const ContactUs = () => {
       setEmail('');
       setNumber('');
       setMessage('');
+	logger.info(`handleSubmit(e=${e}): API call took ${Date.now() - _start} ms`);
     }
 
+logger.debug(`<<< Exiting handleSubmit(e=${e})`);
   };
 
   const handleReset = () => {
+	logger.debug('>>> Entering handleReset()');
     setName('');
     setEmail('');
     setNumber('');
     setMessage('');
+	logger.debug('<<< Exiting handleReset()');
   };
 
+logger.debug('<<< Exiting ContactUs()');
   return (
     <>
       <div>
