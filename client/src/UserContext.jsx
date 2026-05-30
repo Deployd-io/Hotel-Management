@@ -1,13 +1,16 @@
 import axios from "axios";
+const logger = console;
 import { useEffect, useState } from "react";
 import { createContext } from "react";
 
 export const UserContext = createContext({ });
 
 export function UserContextProvider({children}){
+	logger.debug(`>>> Entering UserContextProvider(children=${children})`);
     const [user, setUser] = useState(null)
     const [ready, setReady] = useState(false)
     useEffect(()=>{
+	logger.debug(`UserContextProvider: user → ****`);
                 if(!user){
                     axios.get('/profile').then((response)=>{
                         setUser(response.data);
@@ -20,4 +23,5 @@ export function UserContextProvider({children}){
             {children}
         </UserContext.Provider>
     )
+	logger.debug(`<<< Exiting UserContextProvider(children=${children})`);
 }

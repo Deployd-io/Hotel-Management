@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import axios, { all } from 'axios'
+const logger = console;
 import { Link } from 'react-router-dom'
 
 const Home = () => {
+logger.debug('>>> Entering Home()');
   const [allPlaces, setallPlaces] = useState([])
   useEffect(() => {
     axios.get('/allPlaces').then((response) => {
       setallPlaces(response.data)
     })
   }, [])
+logger.debug('<<< Exiting Home()');
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 px-4 sm:px-8 md:px-12 lg:px-20 xl:px-24 gap-4 sm:gap-6 md:gap-8 mt-4 sm:mt-8 gap-y-8'>
       {allPlaces.length > 0 && allPlaces.map((place, index) => (
