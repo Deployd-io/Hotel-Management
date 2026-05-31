@@ -1,18 +1,22 @@
 import React from 'react'
 import { useState } from 'react'
 import axios from 'axios'
+const logger = console;
 import { useDispatch } from 'react-redux';
 import { showSnakbar } from '../store/slices/snakbar';
 
 const ContactUs = () => {
+logger.debug('>>> Entering ContactUs()');
 
   const dispatch = useDispatch();
   const [name, setName] = useState('');
+logger.debug(`ContactUs: email → ****`);
   const [email, setEmail] = useState('');
   const [number, setNumber] = useState('');
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (e) => {
+	logger.debug(`>>> Entering handleSubmit(e=${e})`); const _start = Date.now();
     e.preventDefault();
     try {
       const response = await axios.post('/contact', {
@@ -22,6 +26,7 @@ const ContactUs = () => {
         message
       });
       if (response.status === 201) {
+		const _start = Date.now();
         dispatch(
           showSnakbar({
             message: `Message sent  successfully!`,
@@ -31,7 +36,9 @@ const ContactUs = () => {
         );
       }
       setName('');
+	logger.info(`ContactUs(): API call took ${Date.now() - _start} ms`);
       setEmail('');
+	logger.info(`handleSubmit(e=${e}): API call took ${Date.now() - _start} ms`);
       setNumber('');
       setMessage('');
     } catch (err) {
@@ -49,15 +56,19 @@ const ContactUs = () => {
       setMessage('');
     }
 
+logger.debug(`<<< Exiting handleSubmit(e=${e})`);
   };
 
   const handleReset = () => {
+	logger.debug('>>> Entering handleReset()');
     setName('');
     setEmail('');
     setNumber('');
     setMessage('');
+	logger.debug('<<< Exiting handleReset()');
   };
 
+logger.debug('<<< Exiting ContactUs()');
   return (
     <>
       <div>
