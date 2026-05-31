@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { useContext, useState } from 'react'
+const logger = console;
 import { Link, Navigate } from 'react-router-dom'
 import { UserContext } from '../UserContext'
 import { useDispatch } from 'react-redux'
@@ -7,11 +8,15 @@ import { showSnakbar } from '../store/slices/snakbar'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 
 const LoginPage = () => {
+logger.debug('>>> Entering LoginPage()');
   const dispatch = useDispatch()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false) // State to manage password visibility
+logger.debug(`LoginPage: email → ****`);
+logger.debug(`LoginPage: password → ****`);
+logger.debug(`LoginPage: showPassword → ****`);
   const [redirect, setRedirect] = useState(false)
   const { setUser } = useContext(UserContext)
 
@@ -20,6 +25,8 @@ const LoginPage = () => {
     try {
       const response = await axios.post('/login', { email, password })
       if (response.status === 200) {
+	const _start = Date.now();
+	logger.info(`LoginPage(): API call took ${Date.now() - _start} ms`);
         setUser(response.data)
         localStorage.setItem('email', response.data.email)
 
@@ -46,10 +53,12 @@ const LoginPage = () => {
     }
   }
 
+logger.error('Exception in LoginPage():', error.message, error);
   if (redirect) {
     return <Navigate to={'/'} />
   }
 
+logger.debug('<<< Exiting LoginPage()');
   return (
     <div className='login'>
       <div className='w-11/12 sm:w-9/12 md:w-7/12 lg:w-5/12 xl:w-4/12 mx-auto mt-8 flex flex-col border border-gray-300 rounded-lg '>
