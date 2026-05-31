@@ -1,7 +1,10 @@
 import React from 'react'
+const logger = console;
 
 const Perks = ({selected, onChange}) => {
+	logger.debug(`>>> Entering Perks(selected=${selected},onChange=${onChange})`);
      const handlePerks = (e) => {
+		logger.debug(`>>> Entering handlePerks(e=${e})`);
           const ifChecked = e.target.checked;
           const checkedName = e.target.name;
           if(ifChecked){
@@ -10,7 +13,9 @@ const Perks = ({selected, onChange}) => {
           else{
                onChange([...selected.filter((a)=> a!==checkedName)])
           }
+			logger.debug(`<<< Exiting handlePerks(e=${e})`);
      }
+logger.debug(`<<< Exiting Perks(selected=${selected},onChange=${onChange})`);
   return (
      <>
      <h2 className="text-2xl mt-4">Perks</h2>

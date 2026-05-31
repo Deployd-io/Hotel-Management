@@ -3,8 +3,10 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 
 import AddPlace from '../Components/AddPlace';
 import axios from 'axios';
+const logger = console;
 
 const PlacesPage = () => {
+logger.debug('>>> Entering PlacesPage()');
   const { action, id } = useParams();
   const [places, setPlaces] = useState([])
   const [UpdatePlace, setupdatePlace] = useState([])
@@ -12,11 +14,14 @@ const PlacesPage = () => {
 
   useEffect(() => {
     axios.get('/places').then((response) => {
+	const _start = Date.now();
       setPlaces(response.data)
     })
   }, [])
 
+	logger.info(`PlacesPage(): API call took ${Date.now() - _start} ms`);
 
+logger.debug('<<< Exiting PlacesPage()');
   return (
     <>
       {action !== 'new' && (
