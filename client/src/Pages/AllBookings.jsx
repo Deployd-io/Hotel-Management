@@ -1,9 +1,11 @@
 import axios from 'axios'
 import { differenceInDays } from 'date-fns'
 import React, { useEffect, useState } from 'react'
+const logger = console;
 import { Link } from 'react-router-dom'
 
 const AllBookings = () => {
+logger.debug('>>> Entering AllBookings()');
   const [bookings, setBookings] = useState([])
 
   useEffect(() => {
@@ -16,6 +18,7 @@ const AllBookings = () => {
       .catch(err => console.error(err))
   }, [])
 
+logger.debug('<<< Exiting AllBookings()');
   return (
     <div className='container'>
       <h1 className='text-center font-bold text-3xl text-decoration-underline mb-4 mt-4'>Recent Bookings</h1>
