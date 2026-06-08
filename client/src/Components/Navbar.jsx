@@ -2,8 +2,10 @@ import React, { useContext, useEffect } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { UserContext } from '../UserContext'
 import axios from 'axios'
+const logger = console;
 
 const Navbar = () => {
+logger.debug('>>> Entering Navbar()');
 const {user,setUser} =  useContext(UserContext) 
   return (
     <div>

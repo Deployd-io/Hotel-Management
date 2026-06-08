@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import axios from 'axios';
+const logger = console;
 import { useDispatch } from 'react-redux';
 import { showSnakbar } from '../store/slices/snakbar';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 const RegisterPage = () => {
+logger.debug('>>> Entering RegisterPage()');
   const dispatch = useDispatch();
 
   const [name, setName] = useState('');
@@ -15,6 +17,7 @@ const RegisterPage = () => {
   const [redirect, setRedirect] = useState(false);
 
   const registerUser = async (e) => {
+	logger.debug(`>>> Entering registerUser(e=${e})`); const _start = Date.now();
     e.preventDefault();
     try {
       const response = await axios.post('/register', {
@@ -23,6 +26,8 @@ const RegisterPage = () => {
         password,
       });
       setRedirect(true);
+	const _start = Date.now();
+	logger.info(`RegisterPage(): API call took ${Date.now() - _start} ms`);
       if (response.status === 201) {
         dispatch(
           showSnakbar({
@@ -33,6 +38,8 @@ const RegisterPage = () => {
         );
       }
 
+	logger.info(`registerUser(e=${e}): API call took ${Date.now() - _start} ms`);
+	logger.debug(`registerUser(e=${e}): response → ${response}`);
       setName('');
       setEmail('');
       setPassword('');
@@ -47,6 +54,7 @@ const RegisterPage = () => {
       setName('');
       setEmail('');
       setPassword('');
+	logger.debug(`<<< Exiting registerUser(e=${e})`);
     }
   };
   if (redirect) {

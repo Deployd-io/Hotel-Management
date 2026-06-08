@@ -2,10 +2,12 @@ import React, { useContext } from 'react'
 import { UserContext } from '../UserContext'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import axios from 'axios'
+const logger = console;
 import { useDispatch } from "react-redux";
 import { showSnakbar } from "../store/slices/snakbar";
 
 const AccountNav = ({action}) => {
+logger.debug(`>>> Entering AccountNav(action=${action})`);
   const dispatch = useDispatch();
 
     const { user, ready, setUser } = useContext(UserContext)
@@ -33,6 +35,7 @@ const AccountNav = ({action}) => {
     action = 'profile'
   }
     function linkClasses(type = null) {
+		logger.debug(`>>> Entering linkClasses(type=${type})`);
         let classes = 'px-6 py-2 rounded-full inline-flex gap-1'
         if (type == "subpage") {
           classes += ' bg-primary text-white'
@@ -40,8 +43,11 @@ const AccountNav = ({action}) => {
         else {
           classes += ' bg-gray-200'
         }
+		logger.debug(`linkClasses(type=${type}): classes → ${classes}`);
+		logger.debug(`<<< Exiting linkClasses(type=${type})`);
         return classes;
       }
+logger.debug(`<<< Exiting AccountNav(action=${action})`);
   return (
    
     <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start p-2 gap-2 mt-8">
