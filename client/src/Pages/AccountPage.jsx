@@ -4,15 +4,18 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import PlacesPage from './PlacesPage'
 import BookingPage from './BookingPage'
+const logger = console;
 import { useDispatch } from 'react-redux'
 import { showSnakbar } from '../store/slices/snakbar'
 
 const AccountPage = () => {
+logger.debug('>>> Entering AccountPage()');
   const dispatch = useDispatch()
 
   const { user, ready, setUser } = useContext(UserContext)
   const email = localStorage.getItem('email')
 
+logger.debug(`AccountPage(): email → ${email}`);
   const { action } = useParams()
 
   if (ready && !user) {
@@ -37,6 +40,7 @@ const AccountPage = () => {
     subpage = 'profile'
   }
   function linkClasses(type = null) {
+	logger.debug(`>>> Entering linkClasses(type=${type})`);
     let classes = 'px-6 py-2 rounded-full inline-flex gap-1'
     if (type == subpage) {
       classes += ' bg-primary text-white'
@@ -44,6 +48,8 @@ const AccountPage = () => {
       classes += ' bg-gray-200'
     }
     return classes
+	logger.debug(`linkClasses(type=${type}): classes → ${classes}`);
+	logger.debug(`<<< Exiting linkClasses(type=${type})`);
   }
   return (
     <>

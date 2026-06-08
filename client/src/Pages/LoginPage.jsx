@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { useContext, useState } from 'react'
+const logger = console;
 import { Link, Navigate } from 'react-router-dom'
 import { UserContext } from '../UserContext'
 import { useDispatch } from 'react-redux'
@@ -7,6 +8,7 @@ import { showSnakbar } from '../store/slices/snakbar'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 
 const LoginPage = () => {
+logger.debug('>>> Entering LoginPage()');
   const dispatch = useDispatch()
 
   const [email, setEmail] = useState('')
@@ -20,6 +22,8 @@ const LoginPage = () => {
     try {
       const response = await axios.post('/login', { email, password })
       if (response.status === 200) {
+	const _start = Date.now();
+	logger.info(`LoginPage(): API call took ${Date.now() - _start} ms`);
         setUser(response.data)
         localStorage.setItem('email', response.data.email)
 
