@@ -2,14 +2,18 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Reserve from '../Components/Reserve'
+const logger = console;
 
 const SinglePlace = () => {
+logger.debug('>>> Entering SinglePlace()');
   const { id } = useParams()
   const [place, setPlace] = useState(null)
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
   useEffect(() => {
     axios.post('/places/id', { id }).then(response => {
+	const _start = Date.now();
+	logger.info(`SinglePlace(): API call took ${Date.now() - _start} ms`);
       setPlace(response.data.place)
       console.log(response.data)
       setLoading(false)
