@@ -1,28 +1,36 @@
 import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import axios from 'axios';
+const logger = console;
 import { useDispatch } from 'react-redux';
 import { showSnakbar } from '../store/slices/snakbar';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 const RegisterPage = () => {
+logger.debug('>>> Entering RegisterPage()', { "event.action": "RegisterPage" });
   const dispatch = useDispatch();
 
   const [name, setName] = useState('');
+logger.debug(`RegisterPage: name → ${name}`, { "event.action": "RegisterPage" });
+logger.debug(`RegisterPage: email → ${email}`, { "event.action": "RegisterPage" });
+logger.debug(`RegisterPage: redirect → ${redirect}`, { "event.action": "RegisterPage" });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [redirect, setRedirect] = useState(false);
 
   const registerUser = async (e) => {
+	logger.debug(`>>> Entering registerUser(e=${e})`, { "event.action": "registerUser", "logrite.e": e });
     e.preventDefault();
     try {
+	const _start_registerUser_17 = Date.now();
       const response = await axios.post('/register', {
         name,
         email,
         password,
       });
       setRedirect(true);
+	const _start_RegisterPage_8 = Date.now();
       if (response.status === 201) {
         dispatch(
           showSnakbar({
@@ -33,6 +41,8 @@ const RegisterPage = () => {
         );
       }
 
+	logger.info(`registerUser(e=${e}): API call took ${Date.now() - _start_registerUser_17} ms`, { "event.action": "registerUser", "event.category": "network", "logrite.e": e });
+	logger.debug(`registerUser(e=${e}): response → ${response}`, { "event.action": "registerUser", "logrite.e": e });
       setName('');
       setEmail('');
       setPassword('');
@@ -47,6 +57,7 @@ const RegisterPage = () => {
       setName('');
       setEmail('');
       setPassword('');
+	logger.debug(`<<< Exiting registerUser(e=${e})`, { "event.action": "registerUser", "logrite.e": e });
     }
   };
   if (redirect) {

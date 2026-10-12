@@ -3,19 +3,26 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 
 import AddPlace from '../Components/AddPlace';
 import axios from 'axios';
+const logger = console;
 
 const PlacesPage = () => {
+logger.debug('>>> Entering PlacesPage()', { "event.action": "PlacesPage" });
   const { action, id } = useParams();
   const [places, setPlaces] = useState([])
   const [UpdatePlace, setupdatePlace] = useState([])
   const [refresh, setRefresh] = useState(false);
+logger.debug(`PlacesPage: places → ${places}`, { "event.action": "PlacesPage" });
+logger.debug(`PlacesPage: UpdatePlace → ${UpdatePlace}`, { "event.action": "PlacesPage" });
+logger.debug(`PlacesPage: refresh → ${refresh}`, { "event.action": "PlacesPage" });
 
   useEffect(() => {
+	logger.debug('>>> Entering PlacesPage useEffect()');
     axios.get('/places').then((response) => {
       setPlaces(response.data)
     })
   }, [])
 
+const _start_PlacesPage_7 = Date.now();
 
   return (
     <>

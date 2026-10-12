@@ -3,11 +3,13 @@ import { differenceInDays } from 'date-fns'
 import axios from 'axios'
 import { UserContext } from '../UserContext'
 import useRazorpay from 'react-razorpay'
+const logger = console;
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { showSnakbar } from '../store/slices/snakbar'
 
 const Reserve = ({ place }) => {
+logger.debug(`>>> Entering Reserve(place=${place})`, { "event.action": "Reserve", "logrite.place": place });
   const dispatch = useDispatch()
 
   const navigate = useNavigate()
@@ -20,17 +22,30 @@ const Reserve = ({ place }) => {
   const [phone, setPhone] = useState('')
   const [redirect, setRedirect] = useState(false)
 
+logger.debug(`Reserve: checkIn → ${checkIn}`, { "event.action": "Reserve", "logrite.place": place });
+logger.debug(`Reserve: checkOut → ${checkOut}`, { "event.action": "Reserve", "logrite.place": place });
+logger.debug(`Reserve: numberOfGuests → ${numberOfGuests}`, { "event.action": "Reserve", "logrite.place": place });
+logger.debug(`Reserve: fullName → ${fullName}`, { "event.action": "Reserve", "logrite.place": place });
+logger.debug(`Reserve: phone → ${phone}`, { "event.action": "Reserve", "logrite.place": place });
+logger.debug(`Reserve: redirect → ${redirect}`, { "event.action": "Reserve", "logrite.place": place });
   const [loading, setLoading] = useState(true)
   const [selectedMeals, setSelectedMeals] = useState({})
   const [totalPrice, setTotalPrice] = useState(0)
   let status = false
+logger.debug(`Reserve: loading → ${loading}`, { "event.action": "Reserve", "logrite.place": place });
+logger.debug(`Reserve: selectedMeals → ${selectedMeals}`, { "event.action": "Reserve", "logrite.place": place });
+logger.debug(`Reserve: totalPrice → ${totalPrice}`, { "event.action": "Reserve", "logrite.place": place });
+logger.debug(`Reserve(place=${place}): status → ${status}`, { "event.action": "Reserve", "logrite.place": place });
   const [mealType, setMealType] = useState('veg')
   const [phoneError, setPhoneError] = useState('')
 
+logger.debug(`Reserve: phoneError → ${phoneError}`, { "event.action": "Reserve", "logrite.place": place });
   useEffect(() => {
+	logger.debug('>>> Entering Reserve useEffect()');
     setLoading(false)
   }, [user])
 
+logger.debug('<<< Exiting Reserve useEffect()');
   useEffect(() => {
     calculateTotalPrice()
   }, [selectedMeals, numberOfGuests, checkIn, checkOut])
@@ -41,6 +56,7 @@ const Reserve = ({ place }) => {
   }
 
   const makeBooking = async (razorpay_payment_id, status) => {
+	logger.debug(`>>> Entering makeBooking(razorpay_payment_id=${razorpay_payment_id},status=${status})`, { "event.action": "makeBooking", "logrite.razorpay_payment_id": razorpay_payment_id, "logrite.status": status });
     const response = await axios.post('/bookings', {
       place: place._id,
       checkIn,
@@ -64,6 +80,7 @@ const Reserve = ({ place }) => {
       )
       setRedirect(true)
     } else {
+	const _start_Reserve_10 = Date.now();
       dispatch(
         showSnakbar({
           message: `Please login first`,
@@ -72,9 +89,12 @@ const Reserve = ({ place }) => {
         })
       )
     }
+	logger.debug(`<<< Exiting makeBooking(razorpay_payment_id=${razorpay_payment_id},status=${status})`, { "event.action": "makeBooking", "logrite.razorpay_payment_id": razorpay_payment_id, "logrite.status": status });
   }
 
+logger.info(`Reserve(place=${place}): API call took ${Date.now() - _start_Reserve_10} ms`, { "event.action": "Reserve", "event.category": "network", "logrite.place": place });
   const handlePayment = async () => {
+	logger.debug('>>> Entering handlePayment()', { "event.action": "handlePayment" });
     if (user === null) {
       dispatch(
         showSnakbar({
@@ -95,6 +115,7 @@ const Reserve = ({ place }) => {
         handler: function (response) {
           status = true
           makeBooking(response.razorpay_payment_id, status)
+		logger.debug(`<<< Exiting handler(response=${response})`, { "event.action": "handler", "logrite.response": response });
         },
         notes: {
           address: 'Razorpay Corporate Office'
@@ -106,6 +127,7 @@ const Reserve = ({ place }) => {
 
       const rzp1 = new Razorpay(options)
 
+	logger.debug(`handlePayment(): rzp1 → ${rzp1}`, { "event.action": "handlePayment" });
       rzp1.on('payment.failed', function (response) {
         status = false
         makeBooking(response.razorpay_payment_id, status)
@@ -120,9 +142,11 @@ const Reserve = ({ place }) => {
 
       rzp1.open()
     }
+	logger.debug('<<< Exiting handlePayment()', { "event.action": "handlePayment" });
   }
 
   const handleMealSelect = (mealType, price) => {
+	logger.debug(`>>> Entering handleMealSelect(mealType=${mealType},price=${price})`, { "event.action": "handleMealSelect", "logrite.mealType": mealType, "logrite.price": price });
     // Check if the meal is already selected
     if (selectedMeals.hasOwnProperty(mealType)) {
       // Meal is already selected, so unselect it
@@ -135,19 +159,25 @@ const Reserve = ({ place }) => {
       setSelectedMeals(updatedSelectedMeals)
       setTotalPrice(totalPrice + price)
     }
+	logger.debug(`<<< Exiting handleMealSelect(mealType=${mealType},price=${price})`, { "event.action": "handleMealSelect", "logrite.mealType": mealType, "logrite.price": price });
   }
 
   const calculateTotalPrice = () => {
+	logger.debug('>>> Entering calculateTotalPrice()', { "event.action": "calculateTotalPrice" });
     let mealsTotal = 0
     for (const mealType in selectedMeals) {
+	logger.debug(`Reserve: mealType → ${mealType}`, { "event.action": "Reserve", "logrite.place": place });
       mealsTotal += Number(selectedMeals[mealType]) * numberOfNights
     }
     setTotalPrice(place.price * numberOfNights + mealsTotal)
+	logger.debug('<<< Exiting calculateTotalPrice()', { "event.action": "calculateTotalPrice" });
   }
 
   const today = new Date().toISOString().split('T')[0]
+logger.debug(`Reserve(place=${place}): today → ${today}`, { "event.action": "Reserve", "logrite.place": place });
 
   const validatePhoneNumber = () => {
+	logger.debug('>>> Entering validatePhoneNumber()', { "event.action": "validatePhoneNumber" });
     const phonePattern = /^\d{10}$/;
     if (!phonePattern.test(phone)) {
       //   setPhoneError('Please enter a valid 10-digit phone number');
@@ -170,11 +200,13 @@ const Reserve = ({ place }) => {
   };
 
   const handleReservation = () => {
+	logger.debug('>>> Entering handleReservation()', { "event.action": "handleReservation" });
     const isPhoneValid = validatePhoneNumber();
     // if (isPhoneValid) {
     //   handlePayment();
     // }
 
+	logger.debug(`handleReservation(): isPhoneValid → ${isPhoneValid}`, { "event.action": "handleReservation" });
     if (user === null) {
       dispatch(
         showSnakbar({
@@ -229,6 +261,7 @@ const Reserve = ({ place }) => {
     else {
       handlePayment()
     }
+	logger.debug('<<< Exiting handleReservation()', { "event.action": "handleReservation" });
   };
 
   if (redirect) {
@@ -239,6 +272,7 @@ const Reserve = ({ place }) => {
     return 'Loading...'
   }
 
+logger.debug(`<<< Exiting Reserve(place=${place})`, { "event.action": "Reserve", "logrite.place": place });
   return (
     <div className='w-full sm:w-8/12 lg:w-6/12 xl:w-4/12 mt-16 rounded-2xl border border-gray-200 p-2'>
       <h2 className='font-bold'>₹{place.price} per night</h2>
