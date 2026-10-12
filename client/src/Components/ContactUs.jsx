@@ -1,20 +1,28 @@
 import React from 'react'
 import { useState } from 'react'
 import axios from 'axios'
+const logger = console;
 import { useDispatch } from 'react-redux';
 import { showSnakbar } from '../store/slices/snakbar';
 
 const ContactUs = () => {
+logger.debug('>>> Entering ContactUs()', { "event.action": "ContactUs" });
 
   const dispatch = useDispatch();
   const [name, setName] = useState('');
+logger.debug(`ContactUs: name → ${name}`, { "event.action": "ContactUs" });
+logger.debug(`ContactUs: email → ${email}`, { "event.action": "ContactUs" });
+logger.debug(`ContactUs: number → ${number}`, { "event.action": "ContactUs" });
+logger.debug(`ContactUs: message → ${message}`, { "event.action": "ContactUs" });
   const [email, setEmail] = useState('');
   const [number, setNumber] = useState('');
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (e) => {
+	logger.debug(`>>> Entering handleSubmit(e=${e})`, { "event.action": "handleSubmit", "logrite.e": e });
     e.preventDefault();
     try {
+	const _start_handleSubmit_15 = Date.now();
       const response = await axios.post('/contact', {
         name,
         email,
@@ -22,6 +30,7 @@ const ContactUs = () => {
         message
       });
       if (response.status === 201) {
+		const _start_ContactUs_7 = Date.now();
         dispatch(
           showSnakbar({
             message: `Message sent  successfully!`,
@@ -31,7 +40,9 @@ const ContactUs = () => {
         );
       }
       setName('');
+	logger.info(`ContactUs(): API call took ${Date.now() - _start_ContactUs_7} ms`, { "event.action": "ContactUs", "event.category": "network" });
       setEmail('');
+	logger.info(`handleSubmit(e=${e}): API call took ${Date.now() - _start_handleSubmit_15} ms`, { "event.action": "handleSubmit", "event.category": "network", "logrite.e": e });
       setNumber('');
       setMessage('');
     } catch (err) {
@@ -47,15 +58,18 @@ const ContactUs = () => {
       setEmail('');
       setNumber('');
       setMessage('');
+	logger.debug(`<<< Exiting handleSubmit(e=${e})`, { "event.action": "handleSubmit", "logrite.e": e });
     }
 
   };
 
   const handleReset = () => {
+	logger.debug('>>> Entering handleReset()', { "event.action": "handleReset" });
     setName('');
     setEmail('');
     setNumber('');
     setMessage('');
+	logger.debug('<<< Exiting handleReset()', { "event.action": "handleReset" });
   };
 
   return (

@@ -1,7 +1,10 @@
 import React from 'react'
+const logger = console;
 import { Container, Row, Col, Image } from 'react-bootstrap';
 
 function AboutUs() {
+logger.debug('>>> Entering AboutUs()', { "event.action": "AboutUs" });
+logger.debug('<<< Exiting AboutUs()', { "event.action": "AboutUs" });
   return (
     <div className="container">
  

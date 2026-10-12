@@ -1,3 +1,4 @@
+const logger = console;
 const User = require('../models/User')
 const Booking = require('../models/Booking')
 const Meal = require('../models/Meal')
@@ -11,6 +12,7 @@ const Place = require('../models/Place')
 const ContactUs = require('../models/Contact')
 
 const Contact = async (req, res) => {
+logger.debug(`>>> Entering Contact(req=${req},res=${res})`, { "event.action": "Contact", "logrite.req": req, "logrite.res": res });
   console.log(req.body)
   const { name, email, number, message } = req.body
   try {
@@ -28,9 +30,11 @@ const Contact = async (req, res) => {
       .status(500)
       .json({ message: 'Internal Server Error Please try again later' })
   }
+logger.debug(`<<< Exiting Contact(req=${req},res=${res})`, { "event.action": "Contact", "logrite.req": req, "logrite.res": res });
 }
 
 const registerUser = async (req, res) => {
+logger.debug(`>>> Entering registerUser(req=${req},res=${res})`, { "event.action": "registerUser", "logrite.req": req, "logrite.res": res });
   const { name, email, password } = req.body
   try {
     if (!name || !email || !password) {
@@ -38,6 +42,8 @@ const registerUser = async (req, res) => {
     }
     const existingUser = await User.findOne({ email })
     if (existingUser) {
+	logger.info(`registerUser(req,res)=${req},${res}: find operation took ${Date.now() - __log_start} ms`, { "event.action": "registerUser", "event.category": "database", "logrite.req": req, "logrite.res": res });
+	logger.debug(`registerUser(req=${req},res=${res}): existingUser → ${existingUser}`, { "event.action": "registerUser", "logrite.req": req, "logrite.res": res });
       return res.status(404).json({ message: 'User already registered' })
     }
     const hashPassword = await bcrypt.hash(password, 10)
@@ -52,9 +58,12 @@ const registerUser = async (req, res) => {
       .status(500)
       .json({ message: 'Internal Server Error Please try again later' })
   }
+logger.debug(`<<< Exiting registerUser(req=${req},res=${res})`, { "event.action": "registerUser", "logrite.req": req, "logrite.res": res });
 }
+const __log_start = Date.now();
 
 const loginUser = async (req, res) => {
+logger.debug(`>>> Entering loginUser(req=${req},res=${res})`, { "event.action": "loginUser", "logrite.req": req, "logrite.res": res });
   const { email, password } = req.body
   try {
     if (!email || !password) {
@@ -62,10 +71,13 @@ const loginUser = async (req, res) => {
     }
     const user = await User.findOne({ email })
     if (!user) {
+	logger.info(`loginUser(req,res)=${req},${res}: find operation took ${Date.now() - __log_start} ms`, { "event.action": "loginUser", "event.category": "database", "logrite.req": req, "logrite.res": res });
+	logger.debug(`loginUser(req=${req},res=${res}): user → ${user}`, { "event.action": "loginUser", "logrite.req": req, "logrite.res": res });
       return res.status(404).json({ message: 'User not found' })
     }
     const isMatch = await bcrypt.compare(password, user.password)
     if (isMatch) {
+	logger.debug(`loginUser(req=${req},res=${res}): isMatch → ${isMatch}`, { "event.action": "loginUser", "logrite.req": req, "logrite.res": res });
       const token = jwt.sign(
         { email: user.email, id: user._id, name: user.name },
         process.env.JWT_SECRET,
@@ -77,13 +89,16 @@ const loginUser = async (req, res) => {
       return res.status(404).json({ message: 'Invalid username or password' })
     }
   } catch (err) {
+	logger.error(`Exception in loginUser(req=${req},res=${res}): ${err.message}`, err, { "event.action": "loginUser", "event.category": "process", "logrite.req": req, "logrite.res": res });
     return res
       .status(500)
       .json({ message: 'Internal Server Error Please try again later' })
   }
+logger.debug(`<<< Exiting loginUser(req=${req},res=${res})`, { "event.action": "loginUser", "logrite.req": req, "logrite.res": res });
 }
 
 const getProfile = (req, res) => {
+logger.debug(`>>> Entering getProfile(req=${req},res=${res})`, { "event.action": "getProfile", "logrite.req": req, "logrite.res": res });
   const { token } = req.cookies
   if (token) {
     jwt.verify(token, process.env.JWT_SECRET, {}, (err, user) => {
@@ -92,19 +107,24 @@ const getProfile = (req, res) => {
   } else {
     res.json(null)
   }
+	logger.debug(`<<< Exiting getProfile(req=${req},res=${res})`, { "event.action": "getProfile", "logrite.req": req, "logrite.res": res });
   // res.send({"Authenciated":true,data:req.user})
   // res.json(user)
 }
 
 const logoutUser = (req, res) => {
+logger.debug(`>>> Entering logoutUser(req=${req},res=${res})`, { "event.action": "logoutUser", "logrite.req": req, "logrite.res": res });
   res.clearCookie('token')
 
   res.status(200).json({ message: 'hello' })
+logger.debug(`<<< Exiting logoutUser(req=${req},res=${res})`, { "event.action": "logoutUser", "logrite.req": req, "logrite.res": res });
 }
 
 const uploadLinkPhoto = async (req, res) => {
+logger.debug(`>>> Entering uploadLinkPhoto(req=${req},res=${res})`, { "event.action": "uploadLinkPhoto", "logrite.req": req, "logrite.res": res });
   const { link } = req.body
   const newName = Date.now() + '.jpg'
+logger.debug(`uploadLinkPhoto(req=${req},res=${res}): newName → ${newName}`, { "event.action": "uploadLinkPhoto", "logrite.req": req, "logrite.res": res });
 
   const dest = path.join(__dirname, '..', 'uploads', newName)
   await imagedownload.image({
@@ -112,9 +132,11 @@ const uploadLinkPhoto = async (req, res) => {
     dest: dest
   })
   res.status(200).json({ newName })
+logger.debug(`uploadLinkPhoto(req=${req},res=${res}): dest → ${dest}`, { "event.action": "uploadLinkPhoto", "logrite.req": req, "logrite.res": res });
 }
 
 const addPlace = async (req, res) => {
+logger.debug(`>>> Entering addPlace(req=${req},res=${res})`, { "event.action": "addPlace", "logrite.req": req, "logrite.res": res });
   const {
     title,
     address,
@@ -146,6 +168,7 @@ const addPlace = async (req, res) => {
 
     const meal = await Meal.create(meals)
     // Create the place
+	logger.debug(`addPlace(req=${req},res=${res}): meal → ${meal}`, { "event.action": "addPlace", "logrite.req": req, "logrite.res": res });
     const place = await Place.create({
       owner: user.id,
       title,
@@ -164,11 +187,13 @@ const addPlace = async (req, res) => {
     return res.status(201).json({ place })
   } catch (error) {
     console.error(error)
+logger.debug(`<<< Exiting addPlace(req=${req},res=${res})`, { "event.action": "addPlace", "logrite.req": req, "logrite.res": res });
     return res.status(500).json({ error: 'Server error' })
   }
 }
 
 const getPlaces = async (req, res) => {
+logger.debug(`>>> Entering getPlaces(req=${req},res=${res})`, { "event.action": "getPlaces", "logrite.req": req, "logrite.res": res });
   const { token } = req.cookies
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, currentUser) => {
   // console.log(user.id)
@@ -178,12 +203,15 @@ const getPlaces = async (req, res) => {
 }
 
 const getSinglePlace = async (req, res) => {
+logger.debug(`>>> Entering getSinglePlace(req=${req},res=${res})`, { "event.action": "getSinglePlace", "logrite.req": req, "logrite.res": res });
   // console.log(req.body)
   const { id } = req.body
 
+const __log_start = Date.now();
   try {
     const place = await Place.findById(id).populate('meals')
 
+	logger.info(`getSinglePlace(req,res)=${req},${res}: find operation took ${Date.now() - __log_start} ms`, { "event.action": "getSinglePlace", "event.category": "database", "logrite.req": req, "logrite.res": res });
     if (!place) {
       return res.status(404).json({ error: 'Place not found' })
     }
@@ -191,11 +219,13 @@ const getSinglePlace = async (req, res) => {
     return res.json({ place })
   } catch (error) {
     console.error(error)
+logger.debug(`<<< Exiting getSinglePlace(req=${req},res=${res})`, { "event.action": "getSinglePlace", "logrite.req": req, "logrite.res": res });
     return res.status(500).json({ error: 'Server error' })
   }
 }
 
 const updatePlace = async (req, res) => {
+logger.debug(`>>> Entering updatePlace(req=${req},res=${res})`, { "event.action": "updatePlace", "logrite.req": req, "logrite.res": res });
   // console.log(req.body)
   const {
     id,
@@ -235,30 +265,39 @@ const updatePlace = async (req, res) => {
     return res.status(201).json({ place })
   } catch (error) {
     console.error(error)
+logger.debug(`<<< Exiting updatePlace(req=${req},res=${res})`, { "event.action": "updatePlace", "logrite.req": req, "logrite.res": res });
     return res.status(500).json({ error: 'Server error' })
   }
 }
 
 const removePlace = async (req, res) => {
+logger.debug(`>>> Entering removePlace(req=${req},res=${res})`, { "event.action": "removePlace", "logrite.req": req, "logrite.res": res });
   const { id } = req.body
   try {
     const place = await Place.findByIdAndDelete(id)
     return res.status(201).json({ place })
   } catch (error) {
+	logger.debug(`removePlace(req=${req},res=${res}): place → ${place}`, { "event.action": "removePlace", "logrite.req": req, "logrite.res": res });
     console.error(error)
+logger.debug(`<<< Exiting removePlace(req=${req},res=${res})`, { "event.action": "removePlace", "logrite.req": req, "logrite.res": res });
     return res.status(500).json({ error: 'Server error' })
   }
 }
 
 const allPlaces = async (req, res) => {
+logger.debug(`>>> Entering allPlaces(req=${req},res=${res})`, { "event.action": "allPlaces", "logrite.req": req, "logrite.res": res });
   res.json(await Place.find())
+logger.debug(`<<< Exiting allPlaces(req=${req},res=${res})`, { "event.action": "allPlaces", "logrite.req": req, "logrite.res": res });
 }
 
 const updatePlaces = async (req, res) => {
+logger.debug(`>>> Entering updatePlaces(req=${req},res=${res})`, { "event.action": "updatePlaces", "logrite.req": req, "logrite.res": res });
   res.json(await Place.find())
+logger.debug(`<<< Exiting updatePlaces(req=${req},res=${res})`, { "event.action": "updatePlaces", "logrite.req": req, "logrite.res": res });
 }
 
 const bookPlace = async (req, res) => {
+logger.debug(`>>> Entering bookPlace(req=${req},res=${res})`, { "event.action": "bookPlace", "logrite.req": req, "logrite.res": res });
   const {
     place,
     checkIn,
@@ -276,6 +315,7 @@ const bookPlace = async (req, res) => {
   const { token } = req.cookies
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, currentUser) => {
     if (err) {
+	logger.debug(`<<< Exiting bookPlace(req=${req},res=${res})`, { "event.action": "bookPlace", "logrite.req": req, "logrite.res": res });
       return res.json('Please Login')
     }
     const bookingDoc = await Booking.create({
@@ -297,6 +337,7 @@ const bookPlace = async (req, res) => {
 }
 
 const cancelBooking = async (req, res) => {
+logger.debug(`>>> Entering cancelBooking(req=${req},res=${res})`, { "event.action": "cancelBooking", "logrite.req": req, "logrite.res": res });
   try {
     // Find the booking by ID and update its status to false
     const updatedBooking = await Booking.findByIdAndUpdate(
@@ -314,10 +355,13 @@ const cancelBooking = async (req, res) => {
     console.error('Error cancelling booking:', error)
     res.status(500).json({ error: 'Internal server error' })
   }
+logger.debug(`<<< Exiting cancelBooking(req=${req},res=${res})`, { "event.action": "cancelBooking", "logrite.req": req, "logrite.res": res });
 }
 const getBookingsByID = async (req, res) => {
+logger.debug(`>>> Entering getBookingsByID(req=${req},res=${res})`, { "event.action": "getBookingsByID", "logrite.req": req, "logrite.res": res });
   const { token } = req.cookies
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, currentUser) => {
+	logger.debug(`<<< Exiting getBookingsByID(req=${req},res=${res})`, { "event.action": "getBookingsByID", "logrite.req": req, "logrite.res": res });
     if (err) throw err
     const bookings = await Booking.find({
       userId: currentUser.id,
@@ -329,6 +373,7 @@ const getBookingsByID = async (req, res) => {
 }
 
 const getBookingDetails = async (req, res) => {
+logger.debug(`>>> Entering getBookingDetails(req=${req},res=${res})`, { "event.action": "getBookingDetails", "logrite.req": req, "logrite.res": res });
   console.log(req.body)
   const { token } = req.cookies
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, currentUser) => {
@@ -340,11 +385,13 @@ const getBookingDetails = async (req, res) => {
 }
 
 const postReview = async (req, res) => {
+logger.debug(`>>> Entering postReview(req=${req},res=${res})`, { "event.action": "postReview", "logrite.req": req, "logrite.res": res });
   const place = req.params.id
   const review = req.body.text
 
   const { token } = req.cookies
   jwt.verify(token, process.env.JWT_SECRET, {}, async (err, currentUser) => {
+	logger.debug(`<<< Exiting postReview(req=${req},res=${res})`, { "event.action": "postReview", "logrite.req": req, "logrite.res": res });
     if (err) throw err
 
     const reviewDoc = await Review.create({
@@ -357,15 +404,19 @@ const postReview = async (req, res) => {
 }
 
 const getReviewById = async (req, res) => {
+logger.debug(`>>> Entering getReviewById(req=${req},res=${res})`, { "event.action": "getReviewById", "logrite.req": req, "logrite.res": res });
   const id = req.params.id
   const { token } = req.cookies
+logger.debug(`getReviewById(req=${req},res=${res}): id → ${id}`, { "event.action": "getReviewById", "logrite.req": req, "logrite.res": res });
 
   const reviews = await Review.find({ place: id })
     .populate('place')
     .populate('user')
 
+logger.debug(`getReviewById(req=${req},res=${res}): reviews → ${reviews}`, { "event.action": "getReviewById", "logrite.req": req, "logrite.res": res });
   res.json(reviews)
 
+logger.debug(`<<< Exiting getReviewById(req=${req},res=${res})`, { "event.action": "getReviewById", "logrite.req": req, "logrite.res": res });
 }
 module.exports = {
   getReviewById,

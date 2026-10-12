@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import Perks from '../Components/Perks'
 import axios from 'axios'
+const logger = console;
 import { UserContext } from '../UserContext'
 import { Navigate, useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { showSnakbar } from '../store/slices/snakbar'
 
 const AddPlace = () => {
+logger.debug('>>> Entering AddPlace()', { "event.action": "AddPlace" });
   const dispatch = useDispatch()
 
   const { id } = useParams()
@@ -29,13 +31,31 @@ const AddPlace = () => {
   const [mealPrice, setMealPrice] = useState([])
   const [meals, setMeals] = useState([])
   // const [mealPrice,setMealPrice] = useState([]);
+logger.debug(`AddPlace: title → ${title}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: address → ${address}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: photoLink → ${photoLink}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: addedPhotos → ${addedPhotos}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: description → ${description}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: perks → ${perks}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: extraInfo → ${extraInfo}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: checkIn → ${checkIn}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: checkOut → ${checkOut}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: maxGuests → ${maxGuests}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: price → ${price}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: mealTypeLink → ${mealTypeLink}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: mealPriceLink → ${mealPriceLink}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: mealType → ${mealType}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: mealPrice → ${mealPrice}`, { "event.action": "AddPlace" });
+logger.debug(`AddPlace: meals → ${meals}`, { "event.action": "AddPlace" });
 
 
   const [redirect, setRedirect] = useState(false)
 
+logger.debug(`AddPlace: redirect → ${redirect}`, { "event.action": "AddPlace" });
   useEffect(() => {
     if (id) {
       axios.post('/places/id', { id }).then(response => {
+		const _start_AddPlace_9 = Date.now();
         console.log(response.data.place)
         const {
           title,
@@ -67,6 +87,7 @@ const AddPlace = () => {
         setMealPrice(meals.mealPrice)
       })
 
+	logger.info(`AddPlace(): API call took ${Date.now() - _start_AddPlace_9} ms`, { "event.action": "AddPlace", "event.category": "network" });
     }
     // console.log(mealType)
   }, [])

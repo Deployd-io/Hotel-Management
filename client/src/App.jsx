@@ -23,11 +23,14 @@ import store from './store'
 import AllBookings from './Pages/AllBookings'
 import RecentBookings from './Pages/Report'
 import Report from './Pages/Report'
+const logger = console;
 
 axios.defaults.baseURL = 'http://localhost:3000'
 axios.defaults.withCredentials = true
 
 function App() {
+logger.debug('>>> Entering App()', { "event.action": "App" });
+logger.debug('<<< Exiting App()', { "event.action": "App" });
   return (
     <Provider store={store}>
       <SnackbarComponent />
