@@ -2,14 +2,19 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Reserve from '../Components/Reserve'
+const logger = console;
 
 const SinglePlace = () => {
+logger.error('>>> Entering SinglePlace()', { "event.action": "SinglePlace" });
   const { id } = useParams()
   const [place, setPlace] = useState(null)
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
   useEffect(() => {
+logger.error(`SinglePlace: reviews → ${reviews}`, { "event.action": "SinglePlace" });
+logger.error(`SinglePlace: loading → ${loading}`, { "event.action": "SinglePlace" });
     axios.post('/places/id', { id }).then(response => {
+	const _start_SinglePlace_6 = Date.now();
       setPlace(response.data.place)
       console.log(response.data)
       setLoading(false)

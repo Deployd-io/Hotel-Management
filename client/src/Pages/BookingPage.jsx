@@ -8,13 +8,18 @@ import { showSnakbar } from '../store/slices/snakbar';
 
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+const logger = console;
 
 const BookingPage = () => {
+logger.error('>>> Entering BookingPage()', { "event.action": "BookingPage" });
   const dispatch = useDispatch();
   const [bookings, setBookings] = useState([])
   const [reviewBoxes, setReviewBoxes] = useState({})
   const [reviewTexts, setReviewTexts] = useState({})
   const getBookings = () => {
+logger.error(`BookingPage: bookings → ${bookings}`, { "event.action": "BookingPage" });
+logger.error(`BookingPage: reviewBoxes → ${reviewBoxes}`, { "event.action": "BookingPage" });
+logger.error(`BookingPage: reviewTexts → ${reviewTexts}`, { "event.action": "BookingPage" });
     axios
       .get('/bookings')
       .then(response => {
@@ -30,17 +35,21 @@ const BookingPage = () => {
         setReviewBoxes(initialReviewBoxesState)
       })
       .catch(err => console.error(err))
+	logger.error('<<< Exiting getBookings()', { "event.action": "getBookings" });
   }
   useEffect(() => {
+	logger.error('>>> Entering BookingPage useEffect()');
     getBookings()
   }, [])
   const toggleReviewBox = index => {
+logger.error('<<< Exiting BookingPage useEffect()');
     setReviewBoxes(prevState => ({
       ...prevState,
       [index]: !prevState[index]
     }))
   }
   const submitReview = (index, id) => {
+	logger.error(`>>> Entering submitReview(index=${index},id=${id})`, { "event.action": "submitReview", "logrite.index": index, "logrite.id": id });
     const reviewData = {
       text: reviewTexts[index]
     }
@@ -59,15 +68,19 @@ const BookingPage = () => {
       .catch(error => {
         console.error('Error submitting review:', error)
       })
+	logger.error(`<<< Exiting submitReview(index=${index},id=${id})`, { "event.action": "submitReview", "logrite.index": index, "logrite.id": id });
   }
 
   const handleReviewTextChange = (index, newText) => {
+	logger.error(`>>> Entering handleReviewTextChange(index=${index},newText=${newText})`, { "event.action": "handleReviewTextChange", "logrite.index": index, "logrite.newText": newText });
     setReviewTexts(prevState => ({
       ...prevState,
       [index]: newText
     }))
+	logger.error(`<<< Exiting handleReviewTextChange(index=${index},newText=${newText})`, { "event.action": "handleReviewTextChange", "logrite.index": index, "logrite.newText": newText });
   }
   const cancelBooking = (id) => {
+	logger.error(`>>> Entering cancelBooking(id=${id})`, { "event.action": "cancelBooking", "logrite.id": id });
     console.log(id)
     const confirmCancel = window.confirm("Are you sure you want to cancel?");
     if (confirmCancel) {
@@ -107,21 +120,34 @@ const BookingPage = () => {
           console.error('Error cancelling booking:', error)
         })
 
+	logger.error(`<<< Exiting cancelBooking(id=${id})`, { "event.action": "cancelBooking", "logrite.id": id });
     }
   };
 
   const downloadPdf = async (id) => {
+	logger.error(`>>> Entering downloadPdf(id=${id})`, { "event.action": "downloadPdf", "logrite.id": id });
     try {
       const response = await axios.get(`/bookings/${id}`);
+	const _start_BookingPage_12 = Date.now();
+	logger.error(`BookingPage(): API call took ${Date.now() - _start_BookingPage_12} ms`, { "event.action": "BookingPage", "event.category": "network" });
 
       const capture = document.getElementById('capture');
+	logger.error(`downloadPdf(id=${id}): response → ${response}`, { "event.action": "downloadPdf", "logrite.id": id });
+	logger.error(`downloadPdf(id=${id}): capture → ${capture}`, { "event.action": "downloadPdf", "logrite.id": id });
+	const _startApi_downloadPdf_113 = Date.now();
+	logger.error(`downloadPdf(id=${id}): API call took ${Date.now() - _startApi_downloadPdf_113} ms`, { "event.action": "downloadPdf", "event.category": "network", "logrite.id": id });
       const canvas = await html2canvas(capture);
       const imgData = canvas.toDataURL('image/png');
+	logger.error(`downloadPdf(id=${id}): canvas → ${canvas}`, { "event.action": "downloadPdf", "logrite.id": id });
+	logger.error(`downloadPdf(id=${id}): imgData → ${imgData}`, { "event.action": "downloadPdf", "logrite.id": id });
 
       const pdf = new jsPDF('p', 'px', 'a4');
       const width = pdf.internal.pageSize.getWidth();
+	logger.error(`downloadPdf(id=${id}): pdf → ${pdf}`, { "event.action": "downloadPdf", "logrite.id": id });
+	logger.error(`downloadPdf(id=${id}): width → ${width}`, { "event.action": "downloadPdf", "logrite.id": id });
       const height = pdf.internal.pageSize.getHeight();
 
+	logger.error(`downloadPdf(id=${id}): height → ${height}`, { "event.action": "downloadPdf", "logrite.id": id });
       pdf.addImage(imgData, 'JPEG', 0, 0, width, height);
       pdf.save('Booking.pdf');
       dispatch(
@@ -132,6 +158,7 @@ const BookingPage = () => {
         })
       );
     } catch (error) {
+	logger.error(`<<< Exiting downloadPdf(id=${id})`, { "event.action": "downloadPdf", "logrite.id": id });
       console.error('Error downloading PDF:', error);
       dispatch(
         showSnakbar({

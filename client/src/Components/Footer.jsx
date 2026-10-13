@@ -1,9 +1,11 @@
 import React from 'react'
+const logger = console;
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
 
 const Footer = () => {
+logger.error('>>> Entering Footer()', { "event.action": "Footer" });
   return (
     <div className='text-center mt-6 sm:mt-8 lg:mt-10'>
       <hr className='my-2 sm:my-4 lg:my-6 border-gray-400' />

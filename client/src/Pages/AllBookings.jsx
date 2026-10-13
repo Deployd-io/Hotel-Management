@@ -1,11 +1,14 @@
 import axios from 'axios'
 import { differenceInDays } from 'date-fns'
 import React, { useEffect, useState } from 'react'
+const logger = console;
 import { Link } from 'react-router-dom'
 
 const AllBookings = () => {
+logger.error('>>> Entering AllBookings()', { "event.action": "AllBookings" });
   const [bookings, setBookings] = useState([])
 
+logger.error(`AllBookings: bookings → ${bookings}`, { "event.action": "AllBookings" });
   useEffect(() => {
     axios
       .get('/bookings/detail')
