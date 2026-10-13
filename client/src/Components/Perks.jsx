@@ -1,7 +1,10 @@
 import React from 'react'
+const logger = console;
 
 const Perks = ({selected, onChange}) => {
+	logger.error(`>>> Entering Perks(selected=${selected},onChange=${onChange})`, { "event.action": "Perks", "logrite.selected": selected, "logrite.onChange": onChange });
      const handlePerks = (e) => {
+		logger.error(`>>> Entering handlePerks(e=${e})`, { "event.action": "handlePerks", "logrite.e": e });
           const ifChecked = e.target.checked;
           const checkedName = e.target.name;
           if(ifChecked){
@@ -10,6 +13,8 @@ const Perks = ({selected, onChange}) => {
           else{
                onChange([...selected.filter((a)=> a!==checkedName)])
           }
+			logger.error(`<<< Exiting handlePerks(e=${e})`, { "event.action": "handlePerks", "logrite.e": e });
+	logger.error(`<<< Exiting Perks(selected=${selected},onChange=${onChange})`, { "event.action": "Perks", "logrite.selected": selected, "logrite.onChange": onChange });
      }
   return (
      <>

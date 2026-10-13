@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+const logger = console;
 import { hideSnakbar } from "../store/slices/snakbar";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -9,15 +10,20 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 const SnackbarComponent = () => {
+logger.error('>>> Entering SnackbarComponent()', { "event.action": "SnackbarComponent" });
   const snackbarState = useSelector((state) => state.snakbar);
   const dispatch = useDispatch();
+logger.error(`Alert(elevation=${elevation}): snackbarState.id → ${snackbarState?.id}`, { "event.action": "Alert", "logrite.elevation": elevation });
 
+logger.error(`SnackbarComponent(): snackbarState.id → ${snackbarState?.id}`, { "event.action": "SnackbarComponent" });
   const handleClose = (event, reason) => {
+	logger.error(`>>> Entering handleClose(event=${event},reason=${reason})`, { "event.action": "handleClose", "logrite.event": event, "logrite.reason": reason });
     if (reason === "clickaway") {
       return;
     }
 
     dispatch(hideSnakbar());
+	logger.error(`<<< Exiting handleClose(event=${event},reason=${reason})`, { "event.action": "handleClose", "logrite.event": event, "logrite.reason": reason });
   };
   
   return (

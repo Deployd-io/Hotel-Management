@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { useContext, useState } from 'react'
+const logger = console;
 import { Link, Navigate } from 'react-router-dom'
 import { UserContext } from '../UserContext'
 import { useDispatch } from 'react-redux'
@@ -7,11 +8,14 @@ import { showSnakbar } from '../store/slices/snakbar'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 
 const LoginPage = () => {
+logger.error('>>> Entering LoginPage()', { "event.action": "LoginPage" });
   const dispatch = useDispatch()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false) // State to manage password visibility
+logger.error(`LoginPage: email → ${email}`, { "event.action": "LoginPage" });
+logger.error(`LoginPage: redirect → ${redirect}`, { "event.action": "LoginPage" });
   const [redirect, setRedirect] = useState(false)
   const { setUser } = useContext(UserContext)
 
@@ -20,6 +24,7 @@ const LoginPage = () => {
     try {
       const response = await axios.post('/login', { email, password })
       if (response.status === 200) {
+	const _start_LoginPage_9 = Date.now();
         setUser(response.data)
         localStorage.setItem('email', response.data.email)
 
@@ -32,6 +37,7 @@ const LoginPage = () => {
         )
         setRedirect(true)
       }
+	logger.error(`LoginPage(): API call took ${Date.now() - _start_LoginPage_9} ms`, { "event.action": "LoginPage", "event.category": "network" });
     } catch (err) {
       dispatch(
         showSnakbar({
