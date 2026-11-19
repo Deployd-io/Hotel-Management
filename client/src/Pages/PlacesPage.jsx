@@ -18,10 +18,12 @@ logger.error(`PlacesPage: refresh → ${refresh}`, { "event.action": "PlacesPage
   useEffect(() => {
 	logger.error('>>> Entering PlacesPage useEffect()');
     axios.get('/places').then((response) => {
+	const _start_PlacesPage_8 = Date.now();
       setPlaces(response.data)
     })
   }, [])
 
+	logger.error(`PlacesPage(): API call took ${Date.now() - _start_PlacesPage_8} ms`, { "event.action": "PlacesPage", "event.category": "network" });
 
 logger.error('<<< Exiting PlacesPage()', { "event.action": "PlacesPage" });
   return (

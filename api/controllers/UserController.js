@@ -53,6 +53,7 @@ logger.error(`>>> Entering registerUser(req=${req},res=${res})`, { "event.action
     })
     return res.status(201).json(user)
   } catch (err) {
+	logger.error(`Exception in registerUser(req=${req},res=${res}): ${err.message}`, err, { "event.action": "registerUser", "event.category": "process" });
     return res
       .status(500)
       .json({ message: 'Internal Server Error Please try again later' })
@@ -130,6 +131,7 @@ logger.error(`uploadLinkPhoto(req=${req},res=${res}): newName → ${newName}`, {
   })
   res.status(200).json({ newName })
 logger.error(`uploadLinkPhoto(req=${req},res=${res}): dest → ${dest}`, { "event.action": "uploadLinkPhoto" });
+logger.error(`<<< Exiting uploadLinkPhoto(req=${req},res=${res})`, { "event.action": "uploadLinkPhoto" });
 }
 
 const addPlace = async (req, res) => {

@@ -108,6 +108,7 @@ logger.error('<<< Exiting Reserve useEffect()');
         name: 'Acme Corp',
         description: 'Test Transaction',
         handler: function (response) {
+		logger.error(`>>> Entering handler(response=${response})`, { "event.action": "handler" });
           status = true
           makeBooking(response.razorpay_payment_id, status)
 		logger.error(`<<< Exiting handler(response=${response})`, { "event.action": "handler" });

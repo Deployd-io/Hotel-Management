@@ -17,6 +17,7 @@ logger.error('>>> Entering BookingPage()', { "event.action": "BookingPage" });
   const [reviewBoxes, setReviewBoxes] = useState({})
   const [reviewTexts, setReviewTexts] = useState({})
   const getBookings = () => {
+logger.error('>>> Entering getBookings()', { "event.action": "getBookings" });
 logger.error(`BookingPage: bookings → ${bookings}`, { "event.action": "BookingPage" });
 logger.error(`BookingPage: reviewBoxes → ${reviewBoxes}`, { "event.action": "BookingPage" });
 logger.error(`BookingPage: reviewTexts → ${reviewTexts}`, { "event.action": "BookingPage" });

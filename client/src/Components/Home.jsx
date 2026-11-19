@@ -9,6 +9,7 @@ logger.error('>>> Entering Home()', { "event.action": "Home" });
   useEffect(() => {
 	logger.error('>>> Entering Home useEffect()');
     axios.get('/allPlaces').then((response) => {
+	const _start_Home_6 = Date.now();
 	logger.error(`Home: allPlaces → ${allPlaces}`, { "event.action": "Home" });
       setallPlaces(response.data)
     })
