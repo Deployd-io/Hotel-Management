@@ -1,22 +1,28 @@
 import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import axios from 'axios';
+const logger = console;
 import { useDispatch } from 'react-redux';
 import { showSnakbar } from '../store/slices/snakbar';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 const RegisterPage = () => {
+logger.error('>>> Entering RegisterPage()', { "event.action": "RegisterPage" });
   const dispatch = useDispatch();
 
   const [name, setName] = useState('');
+logger.error(`RegisterPage: name → ${name}`, { "event.action": "RegisterPage" });
+logger.error(`RegisterPage: redirect → ${redirect}`, { "event.action": "RegisterPage" });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [redirect, setRedirect] = useState(false);
 
   const registerUser = async (e) => {
+	logger.error(`>>> Entering registerUser(e=${e})`, { "event.action": "registerUser", "logrite.e": e });
     e.preventDefault();
     try {
+	const _start_registerUser_17 = Date.now();
       const response = await axios.post('/register', {
         name,
         email,
@@ -33,10 +39,13 @@ const RegisterPage = () => {
         );
       }
 
+	logger.error(`registerUser(e=${e}): API call took ${Date.now() - _start_registerUser_17} ms`, { "event.action": "registerUser", "event.category": "network", "logrite.e": e });
+	logger.error(`registerUser(e=${e}): response → ${response}`, { "event.action": "registerUser", "logrite.e": e });
       setName('');
       setEmail('');
       setPassword('');
     } catch (err) {
+	logger.error(`Exception in registerUser(e=${e}): ${err.message}`, err, { "event.action": "registerUser", "event.category": "process", "logrite.e": e });
       dispatch(
         showSnakbar({
           message: `${err.response.data.message}`,
@@ -44,14 +53,17 @@ const RegisterPage = () => {
           type: 'success',
         })
       );
+		logger.error('Exception in RegisterPage():', err.message, err, { "event.action": "RegisterPage", "event.category": "process" });
       setName('');
       setEmail('');
       setPassword('');
+	logger.error(`<<< Exiting registerUser(e=${e})`, { "event.action": "registerUser", "logrite.e": e });
     }
   };
   if (redirect) {
     return <Navigate to={'/login'} />;
   }
+logger.error('<<< Exiting RegisterPage()', { "event.action": "RegisterPage" });
   return (
     <div className='login'>
       <div className='w-full sm:w-10/12 md:w-8/12 lg:w-6/12 xl:w-4/12 mx-auto mt-8 flex flex-col border border-gray-300 rounded-lg'>

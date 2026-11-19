@@ -2,9 +2,12 @@ import React, { useContext, useEffect } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { UserContext } from '../UserContext'
 import axios from 'axios'
+const logger = console;
 
 const Navbar = () => {
+logger.error('>>> Entering Navbar()', { "event.action": "Navbar" });
 const {user,setUser} =  useContext(UserContext) 
+logger.error('<<< Exiting Navbar()', { "event.action": "Navbar" });
   return (
     <div>
   <header className="px-4 sm:px-8 md:px-12 lg:px-16 xl:px-24 py-4 flex justify-between items-center">

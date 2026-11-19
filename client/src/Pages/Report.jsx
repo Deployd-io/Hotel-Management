@@ -3,10 +3,13 @@ import { differenceInDays } from 'date-fns'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import '../App.css'
+const logger = console;
 
 const Report = () => {
+logger.error('>>> Entering Report()', { "event.action": "Report" });
   const [bookings, setBookings] = useState([])
 
+logger.error(`Report: bookings → ${bookings}`, { "event.action": "Report" });
   useEffect(() => {
     axios
       .get('/bookings/detail')
@@ -16,6 +19,7 @@ const Report = () => {
       .catch(err => console.error(err))
   }, [])
 
+logger.error('<<< Exiting Report()', { "event.action": "Report" });
   return (
     <>
       <h1 className='text-center font-bold text-4xl text-decoration-underline mb-5 mt-4 line'>Report</h1>

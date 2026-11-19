@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import axios, { all } from 'axios'
+const logger = console;
 import { Link } from 'react-router-dom'
 
 const Home = () => {
+logger.error('>>> Entering Home()', { "event.action": "Home" });
   const [allPlaces, setallPlaces] = useState([])
   useEffect(() => {
+	logger.error('>>> Entering Home useEffect()');
     axios.get('/allPlaces').then((response) => {
+	logger.error(`Home: allPlaces → ${allPlaces}`, { "event.action": "Home" });
       setallPlaces(response.data)
     })
   }, [])
@@ -22,6 +26,7 @@ const Home = () => {
     </div>
 
   )
+logger.error('<<< Exiting Home()', { "event.action": "Home" });
 }
 
 export default Home
