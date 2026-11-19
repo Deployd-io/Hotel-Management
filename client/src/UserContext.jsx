@@ -19,6 +19,7 @@ export function UserContextProvider({children}){
                     })
                 }
     },[])
+	logger.error(`<<< Exiting UserContextProvider(children=${children})`, { "event.action": "UserContextProvider", "logrite.children": children });
     return(
         <UserContext.Provider value={{user,setUser,ready}}>
             {children}
